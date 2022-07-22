@@ -1,0 +1,12 @@
+|이름|유형|기능|
+|---|----|---|
+|Post|
+|postId|Number|글번호|
+|postTitle|String|글제목|
+|postName|String|글쓴이|
+|postDate|Date|작성날짜|
+|postContent|String|글내용|
+|Comment|
+|commentId|Number|댓글번호|
+|commentDate|Date|작성날짜|
+|commentContent|String|댓글내용|
