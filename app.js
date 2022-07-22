@@ -15,4 +15,7 @@ app.listen(port, () => {
 app.use(express.json());
 
 
-app.use("/api", [goodsRouter])
+const goodsRouter = require("./routes/goods");
+const cartsRouter = require("./routes/carts");
+
+app.use("/api", [goodsRouter, cartsRouter]);
