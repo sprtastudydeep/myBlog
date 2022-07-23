@@ -10,12 +10,12 @@ app.get('/', (req, res) => {
 
 app.listen(port, () => {
   console.log(port, '포트로 서버가 열렸어요!');
-});
+});   
 
 app.use(express.json());
 
 
-const goodsRouter = require("./routes/goods");
-const cartsRouter = require("./routes/carts");
+const postsRouter = require("./routes/posts");
+const commentRouter = require("./routes/comment");
 
-app.use("/api", [goodsRouter, cartsRouter]);
+app.use("/posts", [postsRouter,commentRouter]);
