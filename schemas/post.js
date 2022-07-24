@@ -12,9 +12,6 @@ const postSchema = new mongoose.Schema({
     postName:{
         type:String
     },
-    postDate:{
-        type:Date
-    },
     postPassword:{
         type:String
     },
