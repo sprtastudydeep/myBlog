@@ -6,68 +6,61 @@ const Comment = require("../schemas/comment");
 
 //목록
 router.get('/',async (req,res)=>{
-    let list= 
-        await Post.find({},{'_id':false,'postId':false,'postPassword':false,'postContent':false,"__v":false});
-        list=list.reverse()
-    return res.json({posts:list})
+    let posts= 
+        await Post.find({}).select('postTitle postName createdAt').sort('-createdAt').exec();
+    return res.json({posts:posts})
 })
 //작성
 router.post("/", async (req, res) => {
     //id 날짜는 알아서 할당한다.
-    let curentId=1;
-    const list=await Post.find({})
-    let max=0;
-    for(let i in list){
-        if(max<=list[i]['postId']/1){
-            max=list[i]['postId']/1;
-        }
-    }
-    if(max){
-        curentId=max+1;
-    }
-    const postDate=new Date();
-
+  try{
+    var {postId}=await Post.findOne({}).select('-_id postId').sort('-postId').exec();
+    postId++;
+  }catch(TypeError){
+    postId=1;
+  }
+  
+    console.log(postId)
     //입력은 이름과 제목,내용만 받는다
-    const { postTitle, postName, postContent,postPassword } = req.body;
-    const createdPosts = await Post.create({ postId:curentId, postTitle, postName, postPassword,postDate,postContent  });
-
+    const {postTitle,postName,postPassword,postContent} = req.body;
+    await Post.create({'postId':postId,postTitle,postName,postPassword,postContent} );
     res.json({ result: "입력성공" });
 });
 //조회
 router.get("/:postId", async (req, res) => {
-  const serch = req.params;
-  const list=await Post.findOne({postId:serch.postId/1},{"_id":false,"postPassword":false,"__v":false});
-  if(list==null){
+  const {postId} = req.params;
+  const post=await Post.findOne({'postId':postId}).select('-_id -postPassword -__v').exec();
+  if(post==null){
     return res.json({ success: false, errorMessage: "존재하지 않는 게시판입니다." });
   }
-    let comments=await Comment.find({},{'_id':false,"__v":false});
-    comments=comments.reverse()
-    res.json({ post:list,comments:comments});
+  let comments=await Comment.find({}).select('-_id -__v').sort('-createdAt');
+  res.json({ 'post':post,'comments':comments});
 });
 //수정
 router.put("/:postId", async (req, res) => {
   const {postId} = req.params;
-  const { postTitle, postContent,postPassword } = req.body;
-  const post  = await Post.find({ postId })
-  if (!post.length) {
+  const body= req.body;
+  const post  = await Post.findOne({ 'postId':postId })
+  if (post==null) {
     return res.json({ success: false, errorMessage: "존재하지 않는 게시판입니다." });
-  }else if(postPassword!=post[0].postPassword){
+  }else if(postPassword!=body.postPassword){
     return res.json({ success: false, errorMessage: "비밀번호가 틀렸습니다." });
   }
-  await Post.updateOne({ postId: postId}, { $set:{ postTitle, postContent,postPassword } });
+  await Post.updateOne({ 'postId': postId}, { $set:body });
   res.json({ result: true });
 });
 //삭제
 router.delete("/:postId", async (req, res) => {
     const {postId} = req.params;
-    const {postPassword } = req.body;
-  const exists = await Post.find({"postId":postId});
-  if (!exists.length) {
+    const body = req.body;
+  const exists = await Post.findOne({"postId":postId});
+  if (exists==null) {
     return res.json({ success: false, errorMessage: "존재하지 않는 글입니다." });
-  }else if(postPassword!=exists[0].postPassword){
+  }else if(body.postPassword!=exists.postPassword){
     return res.json({ success: false, errorMessage: "비밀번호가 틀렸습니다." });
   }
   await Post.deleteOne({ postId});
+  await Comment.deleteMany({'postId':postId})
   res.json({ result: "success" });
 });
 
