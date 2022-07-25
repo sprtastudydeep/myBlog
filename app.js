@@ -1,8 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const connect = require("./schemas");
 connect();
 const app = express();
 const port = 3000;
+
+app.use(cors());
+//https://test-cors.org
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
