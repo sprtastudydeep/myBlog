@@ -22,4 +22,4 @@ app.use(express.json());
 const postsRouter = require("./routes/posts");
 const commentRouter = require("./routes/comment");
 
-app.use("/api/posts", [postsRouter,commentRouter]);
+app.use("/posts", [postsRouter,commentRouter]);
