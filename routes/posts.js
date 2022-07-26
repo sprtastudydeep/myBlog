@@ -29,11 +29,11 @@ router.post("/", async (req, res) => {
 //조회
 router.get("/:postId", async (req, res) => {
   const {postId} = req.params;
-  const post=await Post.findOne({'postId':postId}).select('-_id -postPassword -__v').exec();
+  const post=await Post.findOne({'postId':postId}).select('-_id -updatedAt -postPassword -__v').exec();
   if(post==null){
     return res.json({ success: false, Message: "NONE_EXIST_BOARD" });
   }
-  let comments=await Comment.find({}).select('-_id -__v').sort('-createdAt');
+  let comments=await Comment.find({}).select('-_id -postId -updatedAt -__v').sort('-createdAt');
   res.json({ 'post':post,'comments':comments});
 });
 //수정
