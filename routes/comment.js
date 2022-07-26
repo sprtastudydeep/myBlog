@@ -17,7 +17,7 @@ router.post("/:postId/comment", async (req, res) => {
     console.log(commentId)
     const { commentName, commentContent } = req.body;
     if(commentContent==""){
-        return res.json({ success: false, errorMessage: "댓글 내용을 입력해주세요" });
+        return res.json({ success: false, errorMessage: "WRONG_NONE_CONTENT" });
     }
     await Comment.create({ postId:Number(postId),'commentId':commentId, commentName, commentContent});
 
@@ -27,12 +27,12 @@ router.post("/:postId/comment", async (req, res) => {
 router.put("/:postId/:commentId", async (req, res) => {
   const {postId} = req.params;
   const {commentId} = req.params;
-  const { commentName, commentContent} = req.body;
+  const {commentContent} = req.body;
   const comment  = await Comment.find({ postId,commentId });
   if (!comment.length) {
-    return res.json({ success: false, errorMessage: "존재하지 않는 게시판입니다." });
+    return res.json({ success: false, message: "NONE_EXIST_COMMENT" });
   }
-  await Comment.updateOne({ postId: postId,commentId:commentId}, { $set:{ commentName, commentContent } });
+  await Comment.updateOne({ postId: postId,commentId:commentId}, { $set:{commentContent } });
   res.json({ result: true });
 });
 //삭제
@@ -40,8 +40,8 @@ router.delete("/:postId/:commentId", async (req, res) => {
     const {postId} = req.params;
     const {commentId} = req.params;
   const exist = await Comment.findOne({"postId":postId,"commentId":commentId});
-  if (!exist.length) {
-    return res.json({ success: false, errorMessage: "존재하지 않는 글입니다." });
+  if (exist==null) {
+    return res.json({ success: false, errorMessage: "NONE_EXIST_COMMENT" });
   }
   await Comment.deleteOne({ postId,commentId});
   res.json({ result: "success" });

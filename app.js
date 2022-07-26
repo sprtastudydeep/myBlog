@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(port, '포트로 서버가 열렸어요!');
+  console.log(port, '/posts로 진행해주세요');
 });   
 
 app.use(express.json());
