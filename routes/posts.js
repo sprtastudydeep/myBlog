@@ -31,7 +31,7 @@ router.get("/:postId", async (req, res) => {
   const {postId} = req.params;
   const post=await Post.findOne({'postId':postId}).select('-_id -postPassword -__v').exec();
   if(post==null){
-    return res.json({ success: false, errorMessage: "존재하지 않는 게시판입니다." });
+    return res.json({ success: false, Message: "NONE_EXIST_BOARD" });
   }
   let comments=await Comment.find({}).select('-_id -__v').sort('-createdAt');
   res.json({ 'post':post,'comments':comments});
@@ -42,9 +42,9 @@ router.put("/:postId", async (req, res) => {
   const body= req.body;
   const post  = await Post.findOne({ 'postId':postId })
   if (post==null) {
-    return res.json({ success: false, errorMessage: "존재하지 않는 게시판입니다." });
-  }else if(postPassword!=body.postPassword){
-    return res.json({ success: false, errorMessage: "비밀번호가 틀렸습니다." });
+    return res.json({ success: false, errorMessage: "NONE_EXIST_BOARD" });
+  }else if(post.postPassword!=body.postPassword){
+    return res.json({ success: false, errorMessage: "WRONG_PASSWORD_INFO" });
   }
   await Post.updateOne({ 'postId': postId}, { $set:body });
   res.json({ result: true });
@@ -55,9 +55,9 @@ router.delete("/:postId", async (req, res) => {
     const body = req.body;
   const exists = await Post.findOne({"postId":postId});
   if (exists==null) {
-    return res.json({ success: false, errorMessage: "존재하지 않는 글입니다." });
+    return res.json({ success: false, errorMessage: "NONE_EXIST_BOARD" });
   }else if(body.postPassword!=exists.postPassword){
-    return res.json({ success: false, errorMessage: "비밀번호가 틀렸습니다." });
+    return res.json({ success: false, errorMessage: "WRONG_PASSWORD_INFO" });
   }
   await Post.deleteOne({ postId});
   await Comment.deleteMany({'postId':postId})
