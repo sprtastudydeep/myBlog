@@ -5,14 +5,14 @@ const commentSchema = new mongoose.Schema({
       type:Number
     },
     commentId: {
-    type: Number,
-  },
-  commentName:{
-    type:String
-  },
-  commentContent:{
-    type:String
-  }
+      type: Number,
+    },
+    commentName:{
+      type:String
+    },
+    commentContent:{
+      type:String
+    }
 }, {timestamps:{
   createdAt:true
 }});
