@@ -4,6 +4,10 @@ const router = express.Router();
 const post = require("../schemas/post");
 const Comment = require("../schemas/comment");
 
+router.get("/:postId", async (req, res) => {
+  let comments=await Comment.find({}).select('-_id -postId -updatedAt -__v').sort('-createdAt');
+  res.json({'comments':comments});
+});
 
 //작성
 router.post("/:postId/comment", async (req, res) => {
@@ -23,6 +27,7 @@ router.post("/:postId/comment", async (req, res) => {
 
     res.json({ result: "입력성공" });
 });
+
 //수정
 router.put("/:postId/:commentId", async (req, res) => {
   const {postId} = req.params;
