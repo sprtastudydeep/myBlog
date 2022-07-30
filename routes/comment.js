@@ -4,6 +4,7 @@ const router = express.Router();
 const post = require("../schemas/post");
 const Comment = require("../schemas/comment");
 
+//상세조회 - 댓글 목록
 router.get("/:postId", async (req, res) => {
   let comments=await Comment.find({}).select('-_id -postId -updatedAt -__v').sort('-createdAt');
   res.json({'comments':comments});
