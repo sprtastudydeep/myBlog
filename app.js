@@ -3,7 +3,7 @@ const cors = require('cors');
 const connect = require("./schemas");
 connect();
 const app = express();
-const port = 3000;
+const port = 8080;
 
 app.use(cors());
 //https://test-cors.org
