@@ -31,7 +31,10 @@ router.get("/:postId", async (req, res) => {
   const {postId} = req.params;
   const post=await Post.findOne({'postId':postId}).select('-_id -updatedAt -postPassword -__v').exec();
   if(post==null){
-    return res.json({ success: false, Message: "NONE_EXIST_BOARD" });
+    res.status(400).send({
+      errorMessage: "NONE_EXIST_BOARD",
+    });
+    return;
   }
   let comments=await Comment.find({}).select('-_id -postId -updatedAt -__v').sort('-createdAt');
   res.json({ 'post':post,'comments':comments});
@@ -42,9 +45,15 @@ router.put("/:postId", async (req, res) => {
   const body= req.body;
   const post  = await Post.findOne({ 'postId':postId })
   if (post==null) {
-    return res.json({ success: false, errorMessage: "NONE_EXIST_BOARD" });
+    res.status(400).send({
+      errorMessage: "NONE_EXIST_BOARD",
+    });
+    return;
   }else if(post.postPassword!=body.postPassword){
-    return res.json({ success: false, errorMessage: "WRONG_PASSWORD_INFO" });
+    res.status(400).send({
+      errorMessage: "WRONG_PASSWORD_INFO",
+    });
+    return;
   }
   await Post.updateOne({ 'postId': postId}, { $set:body });
   res.json({ result: true });
@@ -55,9 +64,15 @@ router.delete("/:postId", async (req, res) => {
     const body = req.body;
   const exists = await Post.findOne({"postId":postId});
   if (exists==null) {
-    return res.json({ success: false, errorMessage: "NONE_EXIST_BOARD" });
+    res.status(400).send({
+      errorMessage: "NONE_EXIST_BOARD",
+    });
+    return;
   }else if(body.postPassword!=exists.postPassword){
-    return res.json({ success: false, errorMessage: "WRONG_PASSWORD_INFO" });
+    res.status(400).send({
+      errorMessage: "WRONG_PASSWORD_INFO",
+    });
+    return;
   }
   await Post.deleteOne({ postId});
   await Comment.deleteMany({'postId':postId})
