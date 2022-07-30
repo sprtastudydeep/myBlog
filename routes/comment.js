@@ -36,7 +36,10 @@ router.put("/:postId/:commentId", async (req, res) => {
   const {commentContent} = req.body;
   const comment  = await Comment.find({ postId,commentId });
   if (!comment.length) {
-    return res.json({ success: false, message: "NONE_EXIST_COMMENT" });
+    res.status(400).send({
+      errorMessage: "NONE_EXIST_COMMENT",
+    });
+    return;
   }
   await Comment.updateOne({ postId: postId,commentId:commentId}, { $set:{commentContent } });
   res.json({ result: true });
@@ -47,7 +50,10 @@ router.delete("/:postId/:commentId", async (req, res) => {
     const {commentId} = req.params;
   const exist = await Comment.findOne({"postId":postId,"commentId":commentId});
   if (exist==null) {
-    return res.json({ success: false, errorMessage: "NONE_EXIST_COMMENT" });
+    res.status(400).send({
+      errorMessage: "NONE_EXIST_COMMENT",
+    });
+    return;
   }
   await Comment.deleteOne({ postId,commentId});
   res.json({ result: "success" });
