@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const connect = require("./schemas");
+const { User } = require("./models");
 connect();
 const app = express();
 const port = 8080;
