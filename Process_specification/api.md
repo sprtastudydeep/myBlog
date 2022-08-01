@@ -4,7 +4,7 @@
 |API URL/Method|request|response|desc|
 |------|---|---|----|
 |/login[POST]|||로그인 처리|
-|/signup[POST]|||회원가입|
+|/login/signup[POST]|||회원가입|
 |/posts/like[GET]|||게시판 좋아요(O/X)|
 |/posts/:postId/like[GET]|||좋아요한 게시판목록|
 |/posts[GET]|||게시판 목록|
