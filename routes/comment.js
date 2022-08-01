@@ -6,6 +6,7 @@ const { User } = require("../models");
 const { Comment } = require("../models");
 const { Post } = require("../models");
 const { Like } = require("../models");
+const authmiddleware=require('../middlewares/auth-middleware')
 
 //상세조회 - 댓글 목록
 router.get("/:postId", async (req, res) => {
@@ -14,8 +15,7 @@ router.get("/:postId", async (req, res) => {
   let comments=await Comment.findAll({
     attributes:['commentName','commentContent'],
     where:{postId},
-    order:[['createdAt','desc']],
-    limit:1
+    order:[['createdAt','desc']]
   });
   console.log(1);
   let post=res.locals.post
@@ -24,17 +24,24 @@ router.get("/:postId", async (req, res) => {
 });
 
 //작성
-router.post("/:postId/comment", async (req, res) => {
+router.post("/:postId/comment",authmiddleware, async (req, res) => {
     const {postId} = req.params;
     try{  
       // var {commentId}=await Comment.findOne({}).select('-_id Id').sort('-commentId').exec();
-      var {commentId}=
-      commentId++;
+      let findId=await Comment.findAll({
+        attributes:['commentId'],
+        where:{
+          postId:postId
+        },
+        order:[['commentId','desc']],
+        limit:1
+      })
+      var commentId=findId[0].dataValues.commentId+1
     }catch(TypeError){
       commentId=1;
     }
     console.log(commentId)
-    const { commentName, commentContent } = req.body;
+    const {commentName,commentContent} = req.body;
     if(commentContent==""){
       res.status(400).send({
         errorMessage: "WRONG_NONE_CONTENT",
@@ -42,34 +49,54 @@ router.post("/:postId/comment", async (req, res) => {
       return;
     }
     // await Comment.create({ postId:Number(postId),'commentId':commentId, commentName, commentContent});
-    // await
+    await Comment.create({
+      'postId':Number(postId),'commentId':commentId,commentName,commentContent
+    })
 
     return res.status(200).json({ result: "입력성공" });
 });
 
 //수정
-router.put("/:postId/:commentId", async (req, res) => {
+router.put("/:postId/comment/:commentId",authmiddleware, async (req, res) => {
   const {postId} = req.params;
   const {commentId} = req.params;
-  const {commentContent} = req.body;
+  let body= req.body;
+  for(i in body){
+    if(body[i]==""){
+      delete body[i];
+    }
+  }
   // const comment  = await Comment.find({ postId,commentId });
-  // const comment  = await
-  if (!comment.length) {
+  const comment  = await Comment.findAll({
+    where:{
+      postId:postId,
+      commentId:commentId
+    }
+  })
+  if (comment==null) {
     res.status(400).send({
       errorMessage: "NONE_EXIST_COMMENT",
     });
     return;
   }
   // await Comment.updateOne({ postId: postId,commentId:commentId}, { $set:{commentContent } });
-  // await
+  await Comment.update(
+    body,
+    {where: { 'postId':postId,commentId:commentId}}
+  );
   return res.status(200).json({ result: true });
 });
 //삭제
-router.delete("/:postId/:commentId", async (req, res) => {
+router.delete("/:postId/comment/:commentId",authmiddleware, async (req, res) => {
     const {postId} = req.params;
     const {commentId} = req.params;
   // const exist = await Comment.findOne({"postId":postId,"commentId":commentId});
-  // const exist = await
+  const exist = await Comment.findAll({
+    where:{
+      postId:postId,
+      commentId:commentId
+    }
+  })
   if (exist==null) {
     res.status(400).send({
       errorMessage: "NONE_EXIST_COMMENT",
@@ -77,7 +104,12 @@ router.delete("/:postId/:commentId", async (req, res) => {
     return;
   }
   // await Comment.deleteOne({ postId,commentId});
-  // await
+  await Comment.destroy({
+    where:{
+      postId:postId,
+      commentId:commentId
+    }
+  })
   return res.status(200).json({ result: "success" });
 });
 
