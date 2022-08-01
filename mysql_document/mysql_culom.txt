@@ -1,5 +1,5 @@
 -users
-npx sequelize model:generate --name User --attributes email:string,nickname:string,password:string
+npx sequelize model:generate --name User --attributes nickname:string,password:string
 -posts
 npx sequelize model:generate --name Post --attributes postTitle:string,postName:string,postPassword:string,postContent:string
 -comments
