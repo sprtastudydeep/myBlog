@@ -4,8 +4,9 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../models");
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
-  const [authType, authToken] = (authorization || "").split(" ");
+  // const { authorization } = req.headers;
+  const authorization = req.headers.cookie;
+  const [authType, authToken] = (authorization || "").split("=");
 
   if (!authToken || authType !== "Bearer") {
     res.status(401).send({
@@ -15,7 +16,7 @@ module.exports = (req, res, next) => {
   }
 
   try {
-    const { userId } = jwt.verify(authToken, "customized-secret-key");
+    const { userId } = jwt.verify(authToken, "boardkey");
     User.findByPk(userId).then((user) => {
       res.locals.user = user;
       next();
