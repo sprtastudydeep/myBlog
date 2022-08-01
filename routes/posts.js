@@ -6,7 +6,7 @@ const { Comment } = require("../models");
 const { Post } = require("../models");
 const { Like } = require("../models");
 const comment = require('../models/comment');
-
+const authmiddleware=require('../middlewares/auth-middleware')
 
 //목록
 router.get('/',async (req,res)=>{
@@ -18,8 +18,9 @@ router.get('/',async (req,res)=>{
   return res.status(200).json({posts:posts})
 })
 //작성
-router.post("/", async (req, res) => {
+router.post("/",authmiddleware, async (req, res) => {
     //id 날짜는 알아서 할당한다.
+    const user=res.locals.user;
     try{
       var postId=await Post.findAll({
         attributes:['postId'],
@@ -32,10 +33,10 @@ router.post("/", async (req, res) => {
       postId=1;
     }
     //입력은 이름과 제목,내용만 받는다
-    const {postTitle,postName,postPassword,postContent} = req.body;
+    const {postTitle,postContent} = req.body;
     // await Post.create({'postId':postId,postTitle,postName,postPassword,postContent} );
     await Post.create({
-      'postId':Number(postId),postTitle,postName,postPassword,postContent
+      postTitle,"postName":user.dataValues.nickname,"postPassword":user.dataValues.password,postContent
     })
     return res.status(200).json({ result: "입력성공" });
 });
@@ -63,25 +64,35 @@ router.get("/:postId", async (req, res, next) => {
   next()
 });
 //수정
-router.put("/:postId", async (req, res) => {
+router.put("/:postId",authmiddleware, async (req, res) => {
   const {postId} = req.params;
   let body= req.body;
+  if(body.postContent==""&&body.postTitle==""){
+    return res.status(400).send({
+      errorMessage: "INSERT_POSTCONTENT_OR_POSTTITLE",
+    });
+  }
   for(i in body){
     if(body[i]==""){
       delete body[i];
     }
   }
   // const post  = await Post.findOne({ 'postId':postId })
-  const postPassword  = await Post.findAll({
-    attributes:['postPassword'],
-    where:{'postId':postId},  
+  const exists = await Post.findAll({
+    attributes:['postPassword','postName'],
+    where:{'postId':postId},
     limit:1
-  });
-  if (postPassword==null) {
+  }) 
+  const user=res.locals.user;
+  if(user.dataValues.nickname!=exists[0].dataValues.postName){
+    return res.status(400).send({
+      errorMessage: "WRONG_USER_BOARD",
+    });
+  }else if (exists==null) {
     return res.status(400).send({
       errorMessage: "NONE_EXIST_BOARD",
     });
-  }else if(postPassword[0].dataValues.postPassword!=body.postPassword){
+  }else if(exists[0].dataValues.postPassword!=body.postPassword){
     return res.status(400).send({
       errorMessage: "WRONG_PASSWORD_INFO",
     });
@@ -94,12 +105,13 @@ router.put("/:postId", async (req, res) => {
   return res.status(200).json({ result: true });
 });
 //삭제
-router.delete("/:postId", async (req, res) => {
+router.delete("/:postId",authmiddleware, async (req, res) => {
     const {postId} = req.params;
     const body = req.body;
   // const exists = await Post.findOne({"postId":postId});
+  const user=res.locals.user;
   const exists = await Post.findAll({
-    attributes:['postPassword'],
+    attributes:['postPassword','postName'],
     where:{'postId':postId},
     limit:1
   })
@@ -108,9 +120,9 @@ router.delete("/:postId", async (req, res) => {
       errorMessage: "NONE_EXIST_BOARD",
     });
     return;
-  }else if(body.postPassword!=exists[0].dataValues.postPassword){
+  }else if(body.postPassword!=exists[0].dataValues.postPassword||user.dataValues.nickname!=exists[0].dataValues.postName){
     res.status(400).send({
-      errorMessage: "WRONG_PASSWORD_INFO",
+      errorMessage: "WRONG_PASSWORD_INFO_OR_NICKNAME_INFO",
     });
     return;
   }

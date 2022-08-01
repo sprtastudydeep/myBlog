@@ -24,5 +24,7 @@ app.use(express.json());
 
 const postsRouter = require("./routes/posts");
 const commentRouter = require("./routes/comment");
+const userRouter = require("./routes/user");
 
 app.use("/posts", [postsRouter,commentRouter]);
+app.use("/login", [userRouter]);
