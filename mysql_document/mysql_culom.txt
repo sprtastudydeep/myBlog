@@ -5,7 +5,7 @@ npx sequelize model:generate --name Post --attributes postTitle:string,postName:
 -comments
 npx sequelize model:generate --name Comment --attributes postId:integer,commentId:integer,commentName:string,commentContent:string
 -like
-npx sequelize model:generate --name Like --attributes postId:integer,UserId:integer
+npx sequelize model:generate --name Like --attributes postId:integer,userId:integer,like:boolean
 
 
 ex)
