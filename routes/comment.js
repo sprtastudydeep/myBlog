@@ -7,6 +7,7 @@ const { Comment } = require("../models");
 const { Post } = require("../models");
 const { Like } = require("../models");
 const authmiddleware=require('../middlewares/auth-middleware')
+const existBoard=require('../middlewares/existBoard')
 
 //상세조회 - 댓글 목록
 router.get("/:postId", async (req, res) => {
@@ -24,8 +25,10 @@ router.get("/:postId", async (req, res) => {
 });
 
 //작성
-router.post("/:postId/comment",authmiddleware, async (req, res) => {
+router.post("/:postId/comment",existBoard,authmiddleware, async (req, res) => {
     const {postId} = req.params;
+    const {commentContent} = req.body;
+    const user=res.locals.user;
     try{  
       // var {commentId}=await Comment.findOne({}).select('-_id Id').sort('-commentId').exec();
       let findId=await Comment.findAll({
@@ -41,7 +44,6 @@ router.post("/:postId/comment",authmiddleware, async (req, res) => {
       commentId=1;
     }
     console.log(commentId)
-    const {commentName,commentContent} = req.body;
     if(commentContent==""){
       res.status(400).send({
         errorMessage: "WRONG_NONE_CONTENT",
@@ -50,7 +52,7 @@ router.post("/:postId/comment",authmiddleware, async (req, res) => {
     }
     // await Comment.create({ postId:Number(postId),'commentId':commentId, commentName, commentContent});
     await Comment.create({
-      'postId':Number(postId),'commentId':commentId,commentName,commentContent
+      'postId':Number(postId),'commentId':commentId,"commentName":user.dataValues.nickname,commentContent
     })
 
     return res.status(200).json({ result: "입력성공" });
@@ -61,6 +63,11 @@ router.put("/:postId/comment/:commentId",authmiddleware, async (req, res) => {
   const {postId} = req.params;
   const {commentId} = req.params;
   let body= req.body;
+  if(body.commentContent==""){
+    return res.status(400).send({
+      errorMessage: "INSERT_CONTENT",
+    });
+  }
   for(i in body){
     if(body[i]==""){
       delete body[i];
@@ -73,6 +80,12 @@ router.put("/:postId/comment/:commentId",authmiddleware, async (req, res) => {
       commentId:commentId
     }
   })
+  if(comment[0].dataValues.commentName!=res.locals.user.dataValues.nickname){
+    res.status(400).send({
+      errorMessage: "NONE_OWNER",
+    });
+    return;
+  }
   if (comment==null) {
     res.status(400).send({
       errorMessage: "NONE_EXIST_COMMENT",
@@ -81,7 +94,7 @@ router.put("/:postId/comment/:commentId",authmiddleware, async (req, res) => {
   }
   // await Comment.updateOne({ postId: postId,commentId:commentId}, { $set:{commentContent } });
   await Comment.update(
-    body,
+    {commentContent:body.commentContent},
     {where: { 'postId':postId,commentId:commentId}}
   );
   return res.status(200).json({ result: true });
@@ -97,9 +110,17 @@ router.delete("/:postId/comment/:commentId",authmiddleware, async (req, res) => 
       commentId:commentId
     }
   })
-  if (exist==null) {
+  if (exist.length==0) {
     res.status(400).send({
       errorMessage: "NONE_EXIST_COMMENT",
+    });
+    return;
+  }
+  console.log(exist)
+  console.log(res.locals.user.dataValues.nickname)
+  if(exist[0].dataValues.commentName!=res.locals.user.dataValues.nickname){
+    res.status(400).send({
+      errorMessage: "NONE_OWNER",
     });
     return;
   }
