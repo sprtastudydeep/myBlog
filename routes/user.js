@@ -39,7 +39,12 @@ router.post("/signup", async (req, res) => {
     });
     if(exist.length!=0){
         return res.status(400).send("message:EXEIST_NICKNAME")
-    }   
+    }
+    if(body.nickname.length>=3 && (/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g).test(body.nickname)){
+        return res.status(400).send("message:WRONG_NICKNAME")
+    }else if(body.password.length>=4 && body.password.includes(body.nickname)){
+        return res.status(400).send("message:WRONG_PASSWORD")
+    }
     await User.create({
         "nickname":body.nickname, "password":body.password
     })
