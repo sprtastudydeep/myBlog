@@ -45,10 +45,9 @@ router.post("/:postId/comment",existBoard,authmiddleware, async (req, res) => {
     }
     console.log(commentId)
     if(commentContent==""){
-      res.status(400).send({
+      return res.status(400).send({
         errorMessage: "WRONG_NONE_CONTENT",
       });
-      return;
     }
     // await Comment.create({ postId:Number(postId),'commentId':commentId, commentName, commentContent});
     await Comment.create({
@@ -81,16 +80,14 @@ router.put("/:postId/comment/:commentId",authmiddleware, async (req, res) => {
     }
   })
   if(comment[0].dataValues.commentName!=res.locals.user.dataValues.nickname){
-    res.status(400).send({
+    return res.status(400).send({
       errorMessage: "NONE_OWNER",
     });
-    return;
   }
   if (comment==null) {
-    res.status(400).send({
+    return res.status(400).send({
       errorMessage: "NONE_EXIST_COMMENT",
     });
-    return;
   }
   // await Comment.updateOne({ postId: postId,commentId:commentId}, { $set:{commentContent } });
   await Comment.update(
