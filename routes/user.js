@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
         return res.status(400).send("사용자ID 또는 암호가 올바르지 않습니다.") 
     }
     const token=jwt.sign({ userId: user[0].dataValues.userId }, "boardkey")
-    res.cookie('Bearer',token,{maxAge: 100000})
+    res.cookie('Bearer',token,{maxAge: 360000})
     res.send({
         token:token,
     });
@@ -37,17 +37,19 @@ router.post("/signup", async (req, res) => {
             "nickname":body.nickname
         }
     });
+    console.log(body.password.length>=4 && body.password.includes(body.nickname));
     if(exist.length!=0){
         return res.status(400).send("message:EXEIST_NICKNAME")
     }
-    if(body.nickname.length>=3 && (/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g).test(body.nickname)){
+    if(body.nickname.length<3 || (/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g).test(body.nickname)){
         return res.status(400).send("message:WRONG_NICKNAME")
-    }else if(body.password.length>=4 && body.password.includes(body.nickname)){
+    }else if(body.password.length<4 || body.password.includes(body.nickname)){
         return res.status(400).send("message:WRONG_PASSWORD")
+    }else{
+        await User.create({
+            "nickname":body.nickname, "password":body.password
+        })
     }
-    await User.create({
-        "nickname":body.nickname, "password":body.password
-    })
    
     res.status(201).send("가입성공");
 });

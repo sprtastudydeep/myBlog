@@ -83,7 +83,7 @@ router.put("/:postId",existBoard,authmiddleware, async (req, res) => {
     return res.status(400).send({
       errorMessage: "WRONG_USER_BOARD",
     });
-  }else if(exists.dataValues.postPassword!=body.postPassword){
+  }else if(exists.postPassword!=body.postPassword){
     return res.status(400).send({
       errorMessage: "WRONG_PASSWORD_INFO",
     });
