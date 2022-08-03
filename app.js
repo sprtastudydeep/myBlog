@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
-const connect = require("./schemas");
-connect();
+const { Op } = require("sequelize");
+const { User } = require("./models");
+const { Comment } = require("./models");
+const { Post } = require("./models");
+const { Like } = require("./models");
 const app = express();
-const port = 3000;
+const port = 8080;
 
 app.use(cors());
 //https://test-cors.org
@@ -21,5 +24,7 @@ app.use(express.json());
 
 const postsRouter = require("./routes/posts");
 const commentRouter = require("./routes/comment");
+const userRouter = require("./routes/user");
 
 app.use("/posts", [postsRouter,commentRouter]);
+app.use("/login", [userRouter]);

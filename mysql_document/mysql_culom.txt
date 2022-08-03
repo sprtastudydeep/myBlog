@@ -1,0 +1,15 @@
+-users
+npx sequelize model:generate --name User --attributes nickname:string,password:string
+-posts
+npx sequelize model:generate --name Post --attributes postTitle:string,postName:string,postPassword:string,postContent:string
+-comments
+npx sequelize model:generate --name Comment --attributes postId:integer,commentId:integer,commentName:string,commentContent:string
+-like
+npx sequelize model:generate --name Like --attributes postId:integer,userId:integer,like:boolean
+
+
+ex)
+-goods
+npx sequelize model:generate --name Goods --attributes name:string,thumbnailUrl:string,category:string,price:decimal
+-cart
+npx sequelize model:generate --name Cart --attributes userId:integer,goodsId:integer,quantity:integer
