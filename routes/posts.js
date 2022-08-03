@@ -9,7 +9,6 @@ const comment = require('../models/comment');
 const authmiddleware=require('../middlewares/auth-middleware')
 const existBoard=require('../middlewares/existBoard');
 const { BOOLEAN } = require('sequelize');
-
 //목록
 router.get('/',async (req,res)=>{
   let posts= await Post.findAll({
@@ -126,7 +125,6 @@ router.delete("/:postId",existBoard,authmiddleware, async (req, res) => {
 //좋아요
 router.put("/:postId/like",existBoard,authmiddleware,async(req,res,next)=>{  
   const {postId} = req.params;
-  let {like}=req.body;
   const user=res.locals.user;
   const exists = await Like.findAll({
     where:{
