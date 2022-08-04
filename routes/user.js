@@ -3,10 +3,9 @@ const router = express.Router();
 const { Op } = require("sequelize");
 const { User } = require("../models");
 const { Comment } = require("../models");
-const { Post } = require("../models");
+const models = require("../models");
 const { Like } = require("../models");
 const jwt=require('jsonwebtoken');
-
 //로그인 ,토큰 생성
 router.post("/", async (req, res) => {
     const body=req.body;
