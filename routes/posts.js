@@ -160,6 +160,13 @@ router.get("/like/list",authmiddleware,async(req,res,next)=>{
       userId:user.userId
     }
   });
+  let count=await Like.count({
+    attributes:[
+      "postId"
+    ],
+    group:'postId'
+  });
+  console.log(count)
   let posts=[];
   for(let i=0;i<likes.length;i++){
     let post= await Post.findAll({
@@ -169,16 +176,16 @@ router.get("/like/list",authmiddleware,async(req,res,next)=>{
       },
       limit:1
     });
-    let count=await Like.count({
-      attributes:[
-        "postId"
-      ],
-      where:{
-        postId:likes[i].postId
+    let c=0;
+    for(let j=0;j<count.length;j++){
+      if(count[j].postId==likes[i].postId){
+        c=count[j].count;
+        break;
       }
-    });
+    }
     post=post[0].dataValues
-    post.like=count
+    post.like=c;
+    console.log(post)
     posts.push(post)
   }
   posts.sort((a,b)=>(b.like-a.like))
