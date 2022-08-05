@@ -36,7 +36,6 @@ router.post("/signup", async (req, res) => {
             "nickname":body.nickname
         }
     });
-    console.log(body.password.length>=4 && body.password.includes(body.nickname));
     if(exist.length!=0){
         return res.status(400).send("message:EXEIST_NICKNAME")
     }
@@ -50,7 +49,7 @@ router.post("/signup", async (req, res) => {
         })
     }
    
-    res.status(201).send("가입성공");
+    return res.status(201).send("가입성공");
 });
 
 
