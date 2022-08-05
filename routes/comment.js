@@ -18,9 +18,7 @@ router.get("/:postId", async (req, res) => {
     where:{postId},
     order:[['createdAt','desc']]
   });
-  console.log(1);
   let post=res.locals.post
-  console.log(post)
   return res.status(200).json({'post':post,'comments':comments});
 });
 
@@ -43,16 +41,14 @@ router.post("/:postId/comment",existBoard,authmiddleware, async (req, res) => {
     }catch(TypeError){
       commentId=1;
     }
-    console.log(commentId)
     if(commentContent==""){
-      res.status(400).send({
+      return res.status(400).send({
         errorMessage: "WRONG_NONE_CONTENT",
       });
-      return;
     }
     // await Comment.create({ postId:Number(postId),'commentId':commentId, commentName, commentContent});
     await Comment.create({
-      'postId':Number(postId),'commentId':commentId,"commentName":user.dataValues.nickname,commentContent
+      'postId':postId,'commentId':commentId,"commentName":user.dataValues.nickname,commentContent
     })
 
     return res.status(200).json({ result: "입력성공" });
@@ -68,11 +64,6 @@ router.put("/:postId/comment/:commentId",authmiddleware, async (req, res) => {
       errorMessage: "INSERT_CONTENT",
     });
   }
-  for(i in body){
-    if(body[i]==""){
-      delete body[i];
-    }
-  }
   // const comment  = await Comment.find({ postId,commentId });
   const comment  = await Comment.findAll({
     where:{
@@ -81,16 +72,14 @@ router.put("/:postId/comment/:commentId",authmiddleware, async (req, res) => {
     }
   })
   if(comment[0].dataValues.commentName!=res.locals.user.dataValues.nickname){
-    res.status(400).send({
+    return res.status(400).send({
       errorMessage: "NONE_OWNER",
     });
-    return;
   }
   if (comment==null) {
-    res.status(400).send({
+    return res.status(400).send({
       errorMessage: "NONE_EXIST_COMMENT",
     });
-    return;
   }
   // await Comment.updateOne({ postId: postId,commentId:commentId}, { $set:{commentContent } });
   await Comment.update(
@@ -116,8 +105,6 @@ router.delete("/:postId/comment/:commentId",authmiddleware, async (req, res) => 
     });
     return;
   }
-  console.log(exist)
-  console.log(res.locals.user.dataValues.nickname)
   if(exist[0].dataValues.commentName!=res.locals.user.dataValues.nickname){
     res.status(400).send({
       errorMessage: "NONE_OWNER",

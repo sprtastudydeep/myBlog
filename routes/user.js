@@ -3,10 +3,9 @@ const router = express.Router();
 const { Op } = require("sequelize");
 const { User } = require("../models");
 const { Comment } = require("../models");
-const { Post } = require("../models");
+const models = require("../models");
 const { Like } = require("../models");
 const jwt=require('jsonwebtoken');
-
 //로그인 ,토큰 생성
 router.post("/", async (req, res) => {
     const body=req.body;
@@ -37,7 +36,6 @@ router.post("/signup", async (req, res) => {
             "nickname":body.nickname
         }
     });
-    console.log(body.password.length>=4 && body.password.includes(body.nickname));
     if(exist.length!=0){
         return res.status(400).send("message:EXEIST_NICKNAME")
     }
@@ -51,7 +49,7 @@ router.post("/signup", async (req, res) => {
         })
     }
    
-    res.status(201).send("가입성공");
+    return res.status(201).send("가입성공");
 });
 
 
