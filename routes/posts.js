@@ -22,17 +22,6 @@ router.get('/',async (req,res)=>{
 router.post("/",authmiddleware, async (req, res) => {
     //id 날짜는 알아서 할당한다.
     const user=res.locals.user;
-    try{
-      var postId=await Post.findAll({
-        attributes:['postId'],
-        order:[['postId','desc']],
-        limit:1
-      });
-      // var {postId}=await Post.findOne({}).select('-_id postId').sort('-postId').exec();
-      postId++;
-    }catch(TypeError){
-      postId=1;
-    }
     //입력은 이름과 제목,내용만 받는다
     const {postTitle,postContent} = req.body;
     // await Post.create({'postId':postId,postTitle,postName,postPassword,postContent} );
@@ -43,7 +32,6 @@ router.post("/",authmiddleware, async (req, res) => {
 });
 //조회
 router.get("/:postId",existBoard, async (req, res, next) => {
-  const {postId} = req.params;
   // const post=await Post.findOne({'postId':postId}).select('-_id -updatedAt -postPassword -__v').exec();
   const exists = res.locals.exists
   const like=await Like.count({
@@ -58,11 +46,10 @@ router.get("/:postId",existBoard, async (req, res, next) => {
     'createdAt':exists.createdAt,
     'like':like
   };
-  next()
+  next();
 });
 //수정
 router.put("/:postId",existBoard,authmiddleware, async (req, res) => {
-  const {postId} = req.params;
   let body= req.body;
   if(body.postContent==""&&body.postTitle==""){
     return res.status(400).send({
@@ -82,10 +69,6 @@ router.put("/:postId",existBoard,authmiddleware, async (req, res) => {
     return res.status(400).send({
       errorMessage: "WRONG_USER_BOARD",
     });
-  }else if(exists.postPassword!=body.postPassword){
-    return res.status(400).send({
-      errorMessage: "WRONG_PASSWORD_INFO",
-    });
   }
   // await Post.updateOne({ 'postId': postId}, { $set:body });
   await Post.update(
@@ -96,13 +79,10 @@ router.put("/:postId",existBoard,authmiddleware, async (req, res) => {
 });
 //삭제
 router.delete("/:postId",existBoard,authmiddleware, async (req, res) => {
-    const {postId} = req.params;
   // const exists = await Post.findOne({"postId":postId});
   const user=res.locals.user;
   const exists=res.locals.exists;
-  console.log(user.dataValues.password)
-  console.log(exists.postPassword)
-  if(user.dataValues.password!=exists.postPassword||user.dataValues.nickname!=exists.postName){
+  if(user.dataValues.nickname!=exists.postName){
     res.status(400).send({
       errorMessage: "WRONG_PASSWORD_INFO_OR_NICKNAME_INFO",
     });
@@ -111,13 +91,13 @@ router.delete("/:postId",existBoard,authmiddleware, async (req, res) => {
   // await Post.deleteOne({ postId});
   // await Comment.deleteMany({'postId':postId})
   await Post.destroy({
-    where:{postId}
+    where:{postId:exists.postId}
   })
   await  Comment.destroy({  
-    where:{postId}
+    where:{"postId":exists.postId}
   })
   await Like.destroy({
-    where:{postId}
+    where:{postId:exists.postId}
   })
   return res.status(200).json({ result: "success" });
 });
@@ -155,7 +135,6 @@ router.get("/like/list",authmiddleware,async(req,res,next)=>{
     attributes:[
       "postId","userId"
     ],
-    group:'postId',
     where:{
       userId:user.userId
     }
@@ -166,7 +145,6 @@ router.get("/like/list",authmiddleware,async(req,res,next)=>{
     ],
     group:'postId'
   });
-  console.log(count)
   let posts=[];
   for(let i=0;i<likes.length;i++){
     let post= await Post.findAll({
@@ -185,7 +163,6 @@ router.get("/like/list",authmiddleware,async(req,res,next)=>{
     }
     post=post[0].dataValues
     post.like=c;
-    console.log(post)
     posts.push(post)
   }
   posts.sort((a,b)=>(b.like-a.like))

@@ -8,10 +8,10 @@ module.exports = async(req, res, next) => {
         limit:1
     })
     if (exists.length==0) {
-    res.status(400).send({
-        errorMessage: "NONE_EXIST_BOARD",
-    });
-    return;
+        res.status(400).send({
+            errorMessage: "NONE_EXIST_BOARD",
+        });
+        return;
     }
     res.locals.exists=exists[0].dataValues
     next()
