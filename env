@@ -1,4 +1,0 @@
-node 환경
-npm init -y
-npm i express
-npm install mongoose
