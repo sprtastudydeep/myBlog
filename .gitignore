@@ -1,3 +1,14 @@
 node_modules/
 
 .env
+post,like,user
+post,like,user/likes.repository.js
+post,like,user/likes.service.js
+post,like,user/posts.controller.js
+post,like,user/posts.js
+post,like,user/posts.repositroy.js
+post,like,user/posts.service.js
+post,like,user/user.controller.js
+post,like,user/user.js
+post,like,user/user.repository.js
+post,like,user/user.service.js
