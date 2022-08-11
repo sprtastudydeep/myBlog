@@ -49,6 +49,22 @@ class PostsController {
     const deletePost = await this.postService.deletePost(postName, postId);
     res.status(200).json({ data: deletePost });
   };
+  
+  likePostList = async (req, res, next) => {
+    const {userId} = res.locals.user;
+
+    const response = await this.postService.likePostList(userId);
+    res.status(response.data).json(response.data);
+  };
+
+  likePost = async (req, res, next) => {
+    const { postId } = req.params;
+    const { userId } = res.locals.user;
+
+    const response = await this.postService.likePost(postId, userId);
+    res.status(response.status).json(response.messege);
+  };
+}
 }
 
 module.exports = PostsController;
