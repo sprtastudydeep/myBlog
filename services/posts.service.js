@@ -85,17 +85,19 @@ class PostService {
 
   likePostList = async (userId) => {
     const likePostList = await this.postRepository.findLikeList(userId);
-
-    const posts = likePostList.map(async (p) => {
-      const post = await this.postRepository.findPostById(p.postId);
+    
+    let posts = [];
+    for (let i in likePostList){
+      const postId = likePostList[i].dataValues.postId
+      const post = await this.postRepository.findPostById(postId);
       const likes = await this.postRepository.findLikesNum(p.postId);
-      return {
+      posts.push({
         postId: post.postId,
         postTitle: post.postTitle,
         postName: post.postName,
         likes,
-      };
-    });
+      });
+    }
     const sortingPosts = posts.sort((a, b) => {
       return b.likes - a.likes;
     });
