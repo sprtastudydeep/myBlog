@@ -1,4 +1,3 @@
->>>HEAD ysr
 const express = require("express");
 const router = express.Router();
 
@@ -7,7 +6,6 @@ const postRouter = require("./post.router");
 const commentRouter = require("./comment.router");
 const likeRouter = require("./like.router");
 
-// http://localhost:8080/api
 router.use("/user", userRouter);
 router.use("/posts", postRouter);
 router.use("/comments", commentRouter);
