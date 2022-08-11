@@ -1,30 +1,21 @@
 const express = require('express');
 const cors = require('cors');
-const { Op } = require("sequelize");
-const { User } = require("./models");
-const { Comment } = require("./models");
-const { Post } = require("./models");
-const { Like } = require("./models");
 const app = express();
 const port = 8080;
 
+app.use(express.json());
 app.use(cors());
 //https://test-cors.org
 
+
+// http://localhost:8080/
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+const indexRouter = require("./routes");
+app.use("/api", [indexRouter]);
+
 app.listen(port, () => {
-  console.log(port, '/posts로 진행해주세요');
+  console.log(port, '/api로 진행해주세요');
 });   
-
-app.use(express.json());
-
-
-const postsRouter = require("./routes/posts");
-const commentRouter = require("./routes/comment");
-const userRouter = require("./routes/user");
-
-app.use("/posts", [postsRouter,commentRouter]);
-app.use("/login", [userRouter]);
