@@ -1,10 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { Op } = require("sequelize");
-const { User } = require("./models");
-const { Comment } = require("./models");
-const { Post } = require("./models");
-const { Like } = require("./models");
+const routes = require("./routes");
 const app = express();
 const port = 8080;
 
@@ -21,10 +17,4 @@ app.listen(port, () => {
 
 app.use(express.json());
 
-
-const postsRouter = require("./routes/posts");
-const commentRouter = require("./routes/comment");
-const userRouter = require("./routes/user");
-
-app.use("/posts", [postsRouter,commentRouter]);
-app.use("/login", [userRouter]);
+app.use("/api",routes)
