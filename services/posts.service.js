@@ -24,10 +24,9 @@ class PostService {
   };
   findPostById = async (postId) => {
     const findPost = await this.postRepository.findPostById(postId);
+    const likes = await this.postRepository.findLikesNum(postId)
 
-    return {
-      findPost,
-    };
+    return {findPost,likes}
   };
   createPost = async (postName, postTitle, postContent) => {
     const createdPost = await this.postRepository.createPost(
