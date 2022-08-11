@@ -1,5 +1,6 @@
 // middlewares/auth-middleware.js
 
+const Key = require("../config/secretKey");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
 
@@ -15,7 +16,7 @@ module.exports = (req, res, next) => {
   }
 
   try {
-    const { userId } = jwt.verify(authToken, "boardkey");
+    const { userId } = jwt.verify(authToken, Key.secretKey, Key.option);
     User.findByPk(userId).then((user) => {
       res.locals.user = user;
       next();
