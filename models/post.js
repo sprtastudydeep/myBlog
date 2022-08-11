@@ -20,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     postTitle: DataTypes.STRING,
     postName: DataTypes.STRING,
-    postPassword: DataTypes.STRING,
     postContent: DataTypes.STRING
   }, {
     sequelize,
