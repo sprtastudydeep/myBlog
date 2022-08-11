@@ -14,6 +14,9 @@ module.exports = {
       postName: {
         type: Sequelize.STRING
       },
+      postPassword: {
+        type: Sequelize.STRING
+      },
       postContent: {
         type: Sequelize.STRING
       },
