@@ -53,8 +53,9 @@ class PostService {
     );
     return { postupdate };
   };
-  deletePost = async (postId) => {
+  deletePost = async (postName,postId) => {
     const deletePost = await this.postRepository.findPostById(postId);
+    
     if (!deletePost) {
       return '지우려고하는 게시글이 존재하지 않습니다.';
     }
