@@ -16,7 +16,7 @@ class PostRepository {
       nickname,
       userId,
       title,
-      content,
+       content,
     });
     return createdPost;
   };
