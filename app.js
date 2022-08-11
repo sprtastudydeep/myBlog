@@ -7,12 +7,6 @@ app.use(express.json());
 app.use(cors());
 //https://test-cors.org
 
-
-// http://localhost:8080/
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
 const indexRouter = require("./routes");
 app.use("/api", [indexRouter]);
 
