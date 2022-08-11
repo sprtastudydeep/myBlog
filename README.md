@@ -29,3 +29,11 @@ __________
 
 ## <a href='.\Process_specification\database.md'>Go</a>
 
+_____________
+# .env
+```
+DB_USER
+DB_PASSWORD
+DB_NAME
+DB_END_POINT
+```
