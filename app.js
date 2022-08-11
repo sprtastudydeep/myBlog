@@ -8,7 +8,7 @@ app.use(cors());
 //https://test-cors.org
 
 const indexRouter = require("./routes");
-app.use("/api", [indexRouter]);
+app.use("/api", indexRouter);
 
 app.listen(port, () => {
   console.log(port, '/api로 진행해주세요');

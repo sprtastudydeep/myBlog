@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const userRouter = require("./user.router");
-const postRouter = require("./post.router");
+const postRouter = require("./posts.router");
 const commentRouter = require("./comment.router");
 const likeRouter = require("./like.router");
 

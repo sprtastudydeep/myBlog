@@ -21,8 +21,7 @@ module.exports = class UserController {
     const { nickname, password } = req.body;
 
     const response = await this.userService.loginUser(nickname, password);
-
-    res.cookie('Bearer',response.token,{maxAge: 1800})
+    res.cookie('Bearer',response.token,{maxAge: 180000})
 
     res
       .status(response.status)
