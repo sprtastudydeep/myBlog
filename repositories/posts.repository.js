@@ -1,3 +1,4 @@
+>>>HEAD
 const { Post } = require('../models');
 
 class PostRepository {
