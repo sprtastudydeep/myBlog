@@ -65,6 +65,6 @@ class PostsController {
     res.status(response.status).json(response.messege);
   };
 }
-}
+
 
 module.exports = PostsController;
