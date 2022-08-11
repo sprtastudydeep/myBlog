@@ -16,35 +16,37 @@ class PostsController {
     res.status(200).json({ data: post });
   };
   createPost = async (req, res, next) => {
-    const { nickname, userId } = res.locals.user;
-    const { title, content } = req.body;
+    const { nickname } = res.locals.user;
+    const postName = nickname
+    const { postTitle, postContent } = req.body;
 
     const createdPost = await this.postService.createPost(
-      nickname,
-      userId,
-      title,
-      content
+      postName,
+      postTitle,
+      postContent,
     );
     res.status(200).json({ data: createdPost });
   };
   updatePost = async (req, res, next) => {
-    const { userId } = res.locals.user;
+    const { nickname } = res.locals.user;
+    const postName = nickname
     const { postId } = req.params;
-    const { title, content } = req.body;
+    const { postTitle, postContent } = req.body;
 
     const updatePost = await this.postService.updatePost(
-      userId,
       postId,
-      title,
-      content
+      postTitle,
+      postContent,
+      postName
     );
     res.status(200).json({ data: updatePost });
   };
   deletePost = async (req, res, next) => {
-    const { userId } = res.locals.user;
+    const { nickname } = res.locals.user;
+    const postName = nickname
     const { postId } = req.params;
 
-    const deletePost = await this.postService.deletePost(userId, postId);
+    const deletePost = await this.postService.deletePost(postName, postId);
     res.status(200).json({ data: deletePost });
   };
 }

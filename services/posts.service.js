@@ -13,8 +13,8 @@ class PostService {
     return allPost.map((post) => {
       return {
         postId: post.postId,
-        nickname: post.nickname,
-        title: post.title,
+        postName: post.postName,
+        postTitle: post.postTitle,
         createdAt: post.createdAt,
         updatedAt: post.updatedAt,
       };
@@ -27,38 +27,38 @@ class PostService {
       findPost,
     };
   };
-  createPost = async (nickname, userId, title, content) => {
+  createPost = async (postName, postTitle, postContent) => {
     const createdPost = await this.postRepository.createPost(
-      nickname,
-      userId,
-      title,
-      content
+      postName,
+      postTitle,
+      postContent
     );
     return {
       createdPost,
     };
   };
-  updatePost = async (userId, postId, title, content) => {
+  updatePost = async (postId, postTitle, postContent, postName) => {
     const updatePost = await this.postRepository.findPostById(postId);
     if (!updatePost) {
       return '게시글이 존재하지 않습니다.';
     }
-    if (userId !== updatePost.userId) {
+    if (postName !== updatePost.postName) {
       return '자신이 쓴 글만 수정 가능합니다.';
     }
     const postupdate = await this.postRepository.updatePost(
       postId,
-      title,
-      content
+      postTitle,
+      postContent,
+      postName
     );
     return { postupdate };
   };
-  deletePost = async (userId, postId) => {
+  deletePost = async (postId) => {
     const deletePost = await this.postRepository.findPostById(postId);
     if (!deletePost) {
       return '지우려고하는 게시글이 존재하지 않습니다.';
     }
-    if (userId !== deletePost.userId) {
+    if (postName !== deletePost.postName) {
       return '자신이 쓴 글만 삭제 가능합니다.';
     }
     const postdelete = await this.postRepository.deletePost(postId);

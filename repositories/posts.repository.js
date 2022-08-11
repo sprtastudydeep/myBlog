@@ -11,18 +11,17 @@ class PostRepository {
 
     return post;
   };
-  createPost = async (nickname, userId, title, content) => {
+  createPost = async (postName, postTitle, postContent) => {
     const createdPost = await Post.create({
-      nickname,
-      userId,
-      title,
-      content,
+      postName,
+      postTitle,
+      postContent,
     });
     return createdPost;
   };
-  updatePost = async (postId, title, content) => {
+  updatePost = async (postId, postTitle, postContent) => {
     const updatePost = await Post.update(
-      { title, content },
+      { postTitle, postContent },
       { where: { postId } }
     );
 
